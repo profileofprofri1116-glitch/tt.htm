@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Mini AI</title>
+<style>
+body{font-family:Arial;background:#fff;display:flex;justify-content:center;align-items:center;height:100vh}
+.box{background:#fff;padding:30px;border-radius:1em;width:320px;box-shadow: 5px 5px 5px 5px silver;}
+input,button{width:100%;padding:8px;margin-top:8px;box-shadow: 10px 10px 10px 10px white;border-radius: 1em;}
+#out{margin-top:10px;font-size:14px 1em 20%}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h3 style="background: white;box-shadow: 10px lightcyan">PROMISE AGYEI FRIMPONG AI</h3>
+<input id="question" placeholder="Ask anything">
+<button onclick="ask()">Ask</button>
+<div id="out"></div>
+</div>
+
+<script>
+async function ask(){
+  const question=document.getElementById("question").value;
+  if(question==="") return;
+  const out=document.getElementById("out");
+  out.innerHTML="Thinking...";
+
+  const s=await fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${question}&format=json&origin=*`);
+  const d=await s.json();
+  if(!d.query.search.length){ out.innerHTML="No result"; return; }
+
+  const title=d.query.search[0].title;
+  const p=await fetch(`https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext&titles=${title}&format=json&origin=*`);
+  const e=await p.json();
+  const text=Object.values(e.query.pages)[0].extract;
+
+  out.innerHTML = text.split(". ").slice(0,2).join(". ") + ".";
+  
+}
+</script>
+
+</body>
+</html>
